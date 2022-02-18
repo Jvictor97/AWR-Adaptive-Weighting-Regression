@@ -17,6 +17,7 @@ class EvalUtil:
         for _ in range(num_kp):
             self.data.append(list())
 
+    # gt = ground truth
     def feed(self, jt_uvd_pred, jt_xyz_gt, center_xyz, M, cube, jt_vis=0, skip_check=False):
         """ Used to feed data to the class. Stores the euclidean distance between gt and pred, when it is visible. """
         if not skip_check:

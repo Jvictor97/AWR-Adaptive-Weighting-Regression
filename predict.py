@@ -1,0 +1,78 @@
+import os
+import os.path as osp
+from tqdm import tqdm
+import numpy as np
+
+import torch
+import torch.backends.cudnn as cudnn
+from torch.utils.data import DataLoader
+from torchnet import meter
+
+from model.resnet_deconv import get_deconv_net
+from model.hourglass import PoseNet
+from model.loss import My_SmoothL1Loss
+from dataloader.custom_loader import CustomLoader
+from util.feature_tool import FeatureModule
+from util.eval_tool import EvalUtil
+from util.vis_tool import VisualUtil
+from config import opt
+
+class Trainer(object):
+
+    def __init__(self, config):
+        torch.cuda.set_device(config.gpu_id)
+        cudnn.benchmark = True
+
+        self.config = config
+        self.data_dir = osp.join(self.config.data_dir, self.config.dataset)
+
+        # output dirs for model, log and result figure saving
+        self.work_dir = osp.join(self.config.output_dir, self.config.dataset, 'checkpoint')
+        self.result_dir = osp.join(self.config.output_dir, self.config.dataset, 'results' )
+        if not osp.exists(self.work_dir):
+            os.makedirs(self.work_dir)
+        if not osp.exists(self.result_dir):
+            os.makedirs(self.result_dir)
+
+        self.net = self.net.cuda()
+
+        if self.config.load_model :
+            print('loading model from %s' % self.config.load_model)
+            pth = torch.load(self.config.load_model)
+            self.net.load_state_dict(pth['model'])
+            print(pth['best_records'])
+        self.net = self.net.cuda()
+
+        self.testData = CustomLoader(self.data_dir, 'test', img_size=self.config.img_size)
+        self.criterion = My_SmoothL1Loss().cuda()
+
+        self.FM = FeatureModule()
+
+    @torch.no_grad()
+    def test(self, epoch):
+        self.testLoader = DataLoader(self.testData, batch_size=self.config.batch_size, shuffle=False, num_workers=self.config.num_workers)
+        self.net.eval()
+
+        eval_tool = EvalUtil(self.testData.img_size, self.testData.paras, self.testData.flip, self.testData.jt_num)
+        for ii, (img, M, cube) in tqdm(enumerate(self.testLoader)):
+
+            input = img.cuda()
+            offset_pred = self.net(input)
+            jt_uvd_pred = self.FM.offset2joint_softmax(offset_pred, input, self.config.kernel_size)
+
+            M = M.detach().numpy()
+            cube = cube.detach().numpy()
+            jt_uvd_pred = jt_uvd_pred.detach().cpu().numpy()
+
+        print('FINISHED!')
+
+        if epoch == -1:
+            txt_file = osp.join(self.work_dir, 'test_%.3f.txt' % 999)
+            jt_uvd = np.array(eval_tool.jt_uvd_pred, dtype = np.float32)
+            if not txt_file == None:
+                np.savetxt(txt_file, jt_uvd.reshape([jt_uvd.shape[0], self.config.jt_num * 3]), fmt='%.3f')
+
+if __name__=='__main__':
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+    trainer = Trainer(opt)
+    trainer.test(-1)
