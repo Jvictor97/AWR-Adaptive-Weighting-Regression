@@ -56,6 +56,7 @@ class Trainer(object):
         self.net.eval()
 
         eval_tool = EvalUtil(self.testData.img_size, self.testData.paras, self.testData.flip, self.testData.jt_num)
+        joint_predictions = []
         for ii, (img, M, cube) in tqdm(enumerate(self.testLoader)):
 
             input = img.cuda()
@@ -67,12 +68,14 @@ class Trainer(object):
             M = M.detach().numpy()
             cube = cube.detach().numpy()
             jt_uvd_pred = jt_uvd_pred.detach().cpu().numpy()
+            for i in range(jt_uvd_pred.shape[0]):
+              joint_predictions.append(jt_uvd_pred[i])
 
         print('FINISHED!')
 
         if epoch == -1:
             txt_file = osp.join(self.work_dir, 'test_%.3f.txt' % 999)
-            jt_uvd = np.array(eval_tool.jt_uvd_pred, dtype = np.float32)
+            jt_uvd = np.array(joint_predictions, dtype = np.float32)
             if not txt_file == None:
                 np.savetxt(txt_file, jt_uvd.reshape([jt_uvd.shape[0], self.config.jt_num * 3]), fmt='%.3f')
 
