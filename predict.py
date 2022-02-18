@@ -34,6 +34,8 @@ class Trainer(object):
         if not osp.exists(self.result_dir):
             os.makedirs(self.result_dir)
 
+        self.stacks = int(self.config.net.split('_')[1])
+        self.net = PoseNet(self.config.net, self.config.jt_num)
         self.net = self.net.cuda()
 
         if self.config.load_model :
@@ -57,8 +59,10 @@ class Trainer(object):
         for ii, (img, M, cube) in tqdm(enumerate(self.testLoader)):
 
             input = img.cuda()
-            offset_pred = self.net(input)
-            jt_uvd_pred = self.FM.offset2joint_softmax(offset_pred, input, self.config.kernel_size)
+
+            for stage_idx in range(self.stacks):
+                offset_pred = self.net(input)[stage_idx]
+                jt_uvd_pred = self.FM.offset2joint_softmax(offset_pred, input, self.config.kernel_size)
 
             M = M.detach().numpy()
             cube = cube.detach().numpy()
