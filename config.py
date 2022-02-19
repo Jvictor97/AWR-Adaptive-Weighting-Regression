@@ -22,7 +22,7 @@ class Config(object):
     log_id = "dense"
 
     data_dir = './data'
-    dataset = 'nyu'
+    dataset = 'custom' # 'nyu'
     output_dir = './output/'
     load_model = './results/hourglass_1.pth'
 
