@@ -40,18 +40,19 @@ class CustomLoader(Loader):
 
     image = img[np.newaxis, :].astype(np.float32)
     transformation_matrix = M.astype(np.float32)
+    center_uvd = center_uvd.astype(np.float32)
     cube = cube.astype(np.float32)
 
     # depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(image[0], alpha=0.03), cv2.COLORMAP_JET)
 
     # window = 'Depth'
     # cv2.namedWindow(window, cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow(window, 500, 500)
+    # cv2.resizeWindow(window, 128, 128)
     # cv2.imshow(window, image[0])
     # cv2.waitKey(0)
     # cv2.destroyWindow(window)
 
-    return image, transformation_matrix, cube
+    return image, center_uvd, transformation_matrix, cube
 
   def __len__(self):
     return len(self.data)
@@ -61,7 +62,7 @@ class CustomLoader(Loader):
     return depth
 
   def make_dataset(self):
-    data_path = '{}/custom'.format(self.root)
+    data_path = '{}'.format(self.root)
     center_path = './data/custom/centroids.txt'
 
     data = sorted(glob(data_path + '/frame*.txt'))
