@@ -1,17 +1,20 @@
 JOINT = {
     'nyu': 14,
+    'custom': 14,
     'icvl': 16,
     'msra': 21,
     'hands17': 21
 }
 STEP = {
     'nyu': 30,
+    'custom': 30,
     'icvl': 10,
     'msra': 10,
     'hands17': 5
 }
 EPOCH = {
     'nyu': 40,
+    'custom': 40,
     'icvl': 40,
     'msra': 25,
     'hands17': 10
