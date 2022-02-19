@@ -73,6 +73,8 @@ class Trainer(object):
             M = M.detach().numpy()
             cube = cube.detach().numpy()
             jt_uvd_pred = jt_uvd_pred.detach().cpu().numpy()
+            center_uvd = center_uvd.detach().cpu().numpy()
+
             for i in range(jt_uvd_pred.shape[0]):
               pred = prepare_joint_prediction(jt_uvd_pred[i], center_uvd[i], M[i], cube[i], self.config.img_size)
               joint_predictions.append(pred)
