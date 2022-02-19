@@ -52,7 +52,7 @@ class CustomLoader(Loader):
     # cv2.waitKey(0)
     # cv2.destroyWindow(window)
 
-    return image, center_uvd, transformation_matrix, cube
+    return image, None, None, center_uvd, transformation_matrix, cube
 
   def __len__(self):
     return len(self.data)

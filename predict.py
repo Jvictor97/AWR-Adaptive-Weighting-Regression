@@ -62,8 +62,7 @@ class Trainer(object):
 
         eval_tool = EvalUtil(self.testData.img_size, self.testData.paras, self.testData.flip, self.testData.jt_num)
         joint_predictions = []
-        for ii, (img, center_uvd, M, cube) in tqdm(enumerate(self.testLoader)):
-
+        for ii, (img, _, _, center_uvd, M, cube) in tqdm(enumerate(self.testLoader)):
             input = img.cuda()
 
             for stage_idx in range(self.stacks):
