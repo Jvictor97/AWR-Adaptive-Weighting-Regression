@@ -24,7 +24,7 @@ class CustomLoader(Loader):
 
       self.data = self.make_dataset()
       self.test_cube = np.ones([dataset_size, 3]) * self.cube
-      self.test_cube[4:, :] = self.test_cube[4:, :] * 5 / 6
+      #self.test_cube[4:, :] = self.test_cube[4:, :] * 5 / 6
       self.flip = -1
 
       print("loading dataset, containing %d images." % len(self.data))
