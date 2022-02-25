@@ -12,8 +12,8 @@ class CustomLoader(Loader):
       self.root = root
       self.phase = phase
       
-      dataset_size = 16 # 8252
-      self.paras = (588.03, 587.07, 320., 240.) # wtf
+      dataset_size = 16
+      self.paras = (588.03, 587.07, 320., 240.)
 
       self.cube = np.asarray([300, 300, 300])
       self.dsize = np.asarray([img_size, img_size])
