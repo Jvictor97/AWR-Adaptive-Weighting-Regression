@@ -5,7 +5,7 @@ import cv2
 
 class CustomLoader(Loader):
 
-  def __init__(self, root, phase, img_size=128, ):
+  def __init__(self, root, phase, img_size=128):
       super(CustomLoader, self).__init__(root, phase, img_size, 'custom')
 
       self.name = 'custom'
@@ -27,13 +27,16 @@ class CustomLoader(Loader):
       self.test_cube[4:, :] = self.test_cube[4:, :] * 5 / 6
       self.flip = -1
 
+      self.in_memory_frame = None
+      self.centroid = None
+
       print("loading dataset, containing %d images." % len(self.data))
 
   def __getitem__(self, index):
     img = self.custom_reader(self.data[index][0])
     cube = self.test_cube[index]
 
-    center_uvd = self.data[index][1].copy()
+    center_uvd = self.centroid if self.centroid is not None else self.data[index][1].copy()
 
     img, M = self.crop(img, center_uvd, cube, self.dsize)
     img = self.normalize(img.max(), img, center_uvd, cube)
@@ -43,22 +46,23 @@ class CustomLoader(Loader):
     center_uvd = center_uvd.astype(np.float32)
     cube = cube.astype(np.float32)
 
-    # depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(image[0], alpha=0.03), cv2.COLORMAP_JET)
-
-    # window = 'Depth'
-    # cv2.namedWindow(window, cv2.WINDOW_NORMAL)
-    # cv2.resizeWindow(window, 128, 128)
-    # cv2.imshow(window, image[0])
-    # cv2.waitKey(0)
-    # cv2.destroyWindow(window)
-
     return image, [], [], center_uvd, transformation_matrix, cube
 
   def __len__(self):
     return len(self.data)
 
+  def set_memory_frame(self, frame, centroid):
+    self.in_memory_frame = frame
+    self.centroid = centroid
+
   def custom_reader(self, frame_path):
-    depth = np.loadtxt(frame_path)
+    depth = None
+
+    if self.in_memory_frame is not None:
+      depth = self.in_memory_frame
+    else:
+      depth = np.loadtxt(frame_path)
+
     depth = np.flip(depth, 1)
     return depth
 
