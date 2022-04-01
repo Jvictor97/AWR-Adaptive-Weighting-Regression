@@ -1,8 +1,10 @@
 from flask import Flask, request
 from single_predict import Predict
+from flask_ngrok import run_with_ngrok
 from config import opt
 
 app = Flask(__name__)
+run_with_ngrok(app)
 
 predict = Predict(opt)
 
