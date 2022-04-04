@@ -21,7 +21,7 @@ class SingleLoader(Loader):
 
   def __getitem__(self, index):
     img = self.in_memory_frame.copy()
-    cube = self.test_cube
+    cube = self.test_cube[index]
 
     center_uvd = self.centroid.copy()
 
