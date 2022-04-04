@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 
 from model.hourglass import PoseNet
 from model.loss import My_SmoothL1Loss
-from dataloader.custom_loader import CustomLoader
+from dataloader.single_loader import SingleLoader
 from util.feature_tool import FeatureModule
 from config import opt
 
@@ -40,13 +40,11 @@ class Predict(object):
             print(pth['best_records'])
         self.net = self.net.cuda()
 
-        self.testData = CustomLoader(self.data_dir, 'test', img_size=self.config.img_size)
+        self.testData = SingleLoader(self.data_dir, 'test', img_size=self.config.img_size)
 
         self.criterion = My_SmoothL1Loss().cuda()
 
         self.FM = FeatureModule()
-
-        self.mode = mode # 'file' or 'http'
 
     def set_frame(self, frame, centroid):
       self.testData.set_memory_frame(frame, centroid)
