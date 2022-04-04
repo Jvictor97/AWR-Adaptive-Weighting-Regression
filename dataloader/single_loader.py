@@ -50,6 +50,6 @@ class SingleLoader(Loader):
     center_y = math.ceil(np.average(mass_y))
     center_z = centroid[2]
     
-    centroid = (center_x, center_y, center_z)
+    centroid = np.array([center_x, center_y, center_z])
 
     self.centroid = centroid
