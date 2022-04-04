@@ -19,7 +19,7 @@ class SingleLoader(Loader):
       self.in_memory_frame = None
       self.centroid = None
 
-  def __getitem__(self):
+  def __getitem__(self, index):
     img = self.in_memory_frame.copy()
     cube = self.test_cube
 
