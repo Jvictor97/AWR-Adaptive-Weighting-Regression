@@ -41,8 +41,11 @@ class SingleLoader(Loader):
   def __len__(self):
     return 1
 
-  def set_memory_frame(self, frame, centroid):
-    self.in_memory_frame = np.flip(frame, 1)
+  def set_memory_frame(self, frame, centroid, is_left_hand):
+    if is_left_hand:
+      self.in_memory_frame = np.flip(frame, 1)
+    else:
+      self.in_memory_frame = frame
 
     mass_y, mass_x = np.where((frame > 0) & (frame < 3000))
 

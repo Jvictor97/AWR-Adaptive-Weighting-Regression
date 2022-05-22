@@ -13,8 +13,9 @@ predict = Predict(opt)
 def calculate_joint_coordinates():
   frame = np.array(request.json['frame'])
   centroid = np.array(request.json['centroid'])
+  is_left_hand = request.json['is_left_hand']
 
-  predict.set_frame(frame, centroid)
+  predict.set_frame(frame, centroid, is_left_hand)
   prediction = predict.execute()
 
   return { 'prediction': prediction.tolist() }

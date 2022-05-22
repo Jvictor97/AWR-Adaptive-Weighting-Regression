@@ -46,9 +46,9 @@ class Predict(object):
 
         self.FM = FeatureModule()
 
-    def set_frame(self, frame, centroid):
-      self.testData.set_memory_frame(frame, centroid)
-      print('In memory frame and centroid are set!')
+    def set_frame(self, frame, centroid, is_left_hand):
+      self.testData.set_memory_frame(frame, centroid, is_left_hand)
+      print('In memory frame and centroid are set! Is Left Hand: ', is_left_hand)
 
     @torch.no_grad()
     def execute(self):
